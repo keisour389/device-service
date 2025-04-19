@@ -1,3 +1,24 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: device-service
+
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: smart-physio-therapy-db
+      # username: root
+      # password: example
+      # authentication-database: admin
+
+logging:
+  level:
+    root: INFO
+    com.smart_physio_therapy.device_service: DEBUG
+
 mqtt:
   host: tcp://localhost
   port: 1883
