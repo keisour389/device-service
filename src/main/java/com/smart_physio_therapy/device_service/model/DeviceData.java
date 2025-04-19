@@ -11,8 +11,6 @@ import java.time.LocalDateTime;
 @Document(collection = "device_data")
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
 public class DeviceData {
     @Id
     private String id;
