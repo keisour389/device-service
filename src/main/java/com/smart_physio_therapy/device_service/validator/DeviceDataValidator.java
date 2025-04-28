@@ -1,6 +1,6 @@
 package com.smart_physio_therapy.device_service.validator;
 
-import com.smart_physio_therapy.device_service.model.DeviceData;
+import com.smart_physio_therapy.device_service.model.VitalSignsSensor;
 import com.smart_physio_therapy.device_service.validator.rule.ValidationRule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -13,9 +13,9 @@ public class DeviceDataValidator {
     // Inject any ValidationRule implementation
     private final List<ValidationRule> validationRules;
 
-    public void validate(DeviceData deviceData) {
+    public void validate(VitalSignsSensor vitalSignsSensor) {
         for (ValidationRule validationRule : validationRules) {
-            validationRule.validate(deviceData);
+            validationRule.validate(vitalSignsSensor);
         }
     }
 }

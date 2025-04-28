@@ -10,9 +10,12 @@ spring:
       host: localhost
       port: 27017
       database: smart-physio-therapy-db
-      # username: root
-      # password: example
-      # authentication-database: admin
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 logging:
   level:
@@ -24,3 +27,7 @@ mqtt:
   port: 1883
   clientId: device-service-client
   topic: device/data
+
+kafka-config:
+  topic:
+    patient-health-data: patient-health-data/patient-id
