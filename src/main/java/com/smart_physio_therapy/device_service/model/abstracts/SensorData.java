@@ -17,4 +17,6 @@ public abstract class SensorData {
     private String userId;
 
     private LocalDateTime timestamp;
+
+    private String deviceId;
 }

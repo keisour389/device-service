@@ -1,10 +1,7 @@
 package com.smart_physio_therapy.device_service.config;
 
-import com.smart_physio_therapy.device_service.service.DeviceDataService;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import com.smart_physio_therapy.device_service.mqtt.router.SensorRouter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -16,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@RequiredArgsConstructor
 public class MqttConfig {
     @Value("${mqtt.host}")
     private String host;
@@ -28,11 +26,7 @@ public class MqttConfig {
 
     private static final Logger log = LoggerFactory.getLogger(MqttConfig.class);
 
-    private final DeviceDataService deviceDataService;
-
-    public MqttConfig(DeviceDataService deviceDataService) {
-        this.deviceDataService = deviceDataService;
-    }
+    private final SensorRouter sensorRouter;
 
     @Bean
     public MqttClient configMqttClient() throws MqttException {
@@ -43,7 +37,7 @@ public class MqttConfig {
         client.subscribe(topic, (t, msg) -> {
             log.debug("[Mqtt]: System has been received device data from MQTT");
             String payload = new String(msg.getPayload());
-            deviceDataService.handleMessage(payload);
+            sensorRouter.routeAndHandle(payload);
             // TODO: Send to Kafka will do later
         });
 

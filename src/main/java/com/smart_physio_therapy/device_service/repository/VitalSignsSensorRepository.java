@@ -5,5 +5,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface DeviceDataRepository extends MongoRepository<VitalSignsSensor, String> {
+public interface VitalSignsSensorRepository extends MongoRepository<VitalSignsSensor, String> {
 }

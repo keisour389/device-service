@@ -14,9 +14,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class VitalSignsSensor extends SensorData implements Serializable {
-    private String deviceId;
-
-    private LocalDateTime timestamp;
 
     private int pulse;
 

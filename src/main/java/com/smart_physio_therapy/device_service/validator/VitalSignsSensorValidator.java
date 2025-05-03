@@ -9,7 +9,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class DeviceDataValidator {
+public class VitalSignsSensorValidator {
     // Inject any ValidationRule implementation
     private final List<ValidationRule> validationRules;
 
