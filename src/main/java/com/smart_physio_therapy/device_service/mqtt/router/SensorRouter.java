@@ -8,6 +8,7 @@ import com.smart_physio_therapy.device_service.model.MusculoskeletalSystemSensor
 import com.smart_physio_therapy.device_service.model.VitalSignsSensor;
 import com.smart_physio_therapy.device_service.model.abstracts.SensorData;
 import com.smart_physio_therapy.device_service.repository.VitalSignsSensorRepository;
+import com.smart_physio_therapy.device_service.service.ErrorHandlerService;
 import com.smart_physio_therapy.device_service.service.impl.MusculoskeletalSystemSensorService;
 import com.smart_physio_therapy.device_service.service.impl.VitalSignsSensorService;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,8 @@ public class SensorRouter {
 
     private final VitalSignsSensorService vitalSignsSensorService;
 
+    private final ErrorHandlerService errorHandlerService;
+
     public void routeAndHandle(String rawJson) {
         try {
             JsonNode root = objectMapper.readTree(rawJson);
@@ -41,7 +44,7 @@ public class SensorRouter {
             Optional<SensorType> typeOpt = SensorType.fromString(sensorTypeStr);
             if (typeOpt.isEmpty()) {
                 log.warn("Unknown sensor type: '{}'. Payload: {}", sensorTypeStr, rawJson);
-                // TODO: Handle it to Dead Letter Queue
+                errorHandlerService.handleError("Unknown sensor type: " + sensorTypeStr, rawJson);
                 return;
             }
 
@@ -57,10 +60,10 @@ public class SensorRouter {
             }
         } catch (JsonProcessingException e) {
             log.error("Failed to parse JSON payload. Payload: {} | Error: {}", rawJson, e.getMessage());
-            // TODO: Handle it to Dead Letter Queue
+            errorHandlerService.handleError("Failed to parse JSON payload.", rawJson);
         } catch (Exception e) {
             log.error("Unexpected error while routing payload. Payload: {} | Error: {}", rawJson, e.getMessage(), e);
-            // TODO: Handle it to Dead Letter Queue
+            errorHandlerService.handleError("Unexpected error while routing payload.", rawJson);
         }
 
     }
@@ -69,7 +72,7 @@ public class SensorRouter {
             throws JsonProcessingException {
         VitalSignsSensor vitalSignsData = objectMapper.treeToValue(sensorData, VitalSignsSensor.class);
         setDeviceInfo(vitalSignsData, deviceId, timestamp);
-        // Message will be sent to Kafka and save in DB
+        // Message will be saved in DB
         vitalSignsSensorService.handleMessage(vitalSignsData);
     }
 
@@ -78,7 +81,7 @@ public class SensorRouter {
         MusculoskeletalSystemSensor musculoskeletalSystemSensor = objectMapper
                 .treeToValue(sensorData, MusculoskeletalSystemSensor.class);
         setDeviceInfo(musculoskeletalSystemSensor, deviceId, timestamp);
-        // Message will be sent to Kafka and save in DB
+        // Message will be saved in DB
         musculoskeletalSystemSensorService.handleMessage(musculoskeletalSystemSensor);
     }
 

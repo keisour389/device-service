@@ -31,3 +31,4 @@ mqtt:
 kafka-config:
   topic:
     patient-health-data: patient-health-data/patient-id
+    dead-letter: dead-letter

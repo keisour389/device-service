@@ -5,7 +5,7 @@ import com.smart_physio_therapy.device_service.model.VitalSignsSensor;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TemperatureRule implements ValidationRule{
+public class TemperatureRule implements ValidatorRule<VitalSignsSensor> {
     @Override
     public void validate(VitalSignsSensor data) throws InvalidDeviceDataException {
         if (data.getTemperature() <= 30.0 || data.getTemperature() >= 42.0) {

@@ -1,9 +1,11 @@
 package com.smart_physio_therapy.device_service.service.impl;
 
-import com.smart_physio_therapy.device_service.kafka.DeviceDataKafkaProducer;
+import com.smart_physio_therapy.device_service.exception.InvalidDeviceDataException;
 import com.smart_physio_therapy.device_service.model.MusculoskeletalSystemSensor;
 import com.smart_physio_therapy.device_service.repository.MusculoskeletalSystemSensorRepository;
+import com.smart_physio_therapy.device_service.service.ErrorHandlerService;
 import com.smart_physio_therapy.device_service.service.SensorDataService;
+import com.smart_physio_therapy.device_service.validator.ValidatorEngine;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -12,15 +14,26 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class MusculoskeletalSystemSensorService implements SensorDataService<MusculoskeletalSystemSensor> {
+
     private final MusculoskeletalSystemSensorRepository musculoskeletalSystemSensorRepository;
 
-    private final DeviceDataKafkaProducer deviceDataKafkaProducer;
+    private final ErrorHandlerService errorHandlerService;
+
+    private final ValidatorEngine validatorEngine;
 
     @Override
     public void handleMessage(MusculoskeletalSystemSensor musculoskeletalSystemData) {
-        // TODO: Handle validation here
-        // TODO: Handle @Transactional here
-        deviceDataKafkaProducer.send(musculoskeletalSystemData);
-        musculoskeletalSystemSensorRepository.save(musculoskeletalSystemData);
+        try {
+            validatorEngine.validate(musculoskeletalSystemData);
+            musculoskeletalSystemSensorRepository.save(musculoskeletalSystemData);
+        } catch (InvalidDeviceDataException e) {
+            log.warn("[MusculoskeletalSystemSensorService]: Invalid data received: {}", e.getMessage());
+            errorHandlerService.handleError("[MusculoskeletalSystemSensorService]: Invalid data received",
+                    e.getMessage());
+        } catch (Exception e) {
+            log.error("[MusculoskeletalSystemSensorService]: Unexpected error occurred: {}", e.getMessage());
+            errorHandlerService.handleError("[MusculoskeletalSystemSensorService]: Unexpected " +
+                            "error occurred:", e.getMessage());
+        }
     }
 }
