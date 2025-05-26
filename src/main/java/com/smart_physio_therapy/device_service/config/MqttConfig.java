@@ -38,7 +38,6 @@ public class MqttConfig {
             log.debug("[Mqtt]: System has been received device data from MQTT");
             String payload = new String(msg.getPayload());
             sensorRouter.routeAndHandle(payload);
-            // TODO: Send to Kafka will do later
         });
 
         return client;

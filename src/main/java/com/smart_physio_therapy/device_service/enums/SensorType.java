@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.Optional;
 
 public enum SensorType {
-    VITAL_SIGNS("vital-signs"),
-    MUSCULOSKELETAL_SYSTEM("musculoskeletal-system");
+    VITAL_SIGNS("vitalSigns"),
+    MUSCULOSKELETAL_SYSTEM("musculoskeletalSystem");
 
     private final String value;
 

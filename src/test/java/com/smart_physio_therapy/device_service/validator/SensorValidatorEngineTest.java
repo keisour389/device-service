@@ -4,6 +4,9 @@ import com.smart_physio_therapy.device_service.exception.InvalidDeviceDataExcept
 import com.smart_physio_therapy.device_service.model.MusculoskeletalSystemSensor;
 import com.smart_physio_therapy.device_service.model.VitalSignsSensor;
 import com.smart_physio_therapy.device_service.model.abstracts.SensorData;
+import com.smart_physio_therapy.device_service.validator.rule.DeviceIdRule;
+import com.smart_physio_therapy.device_service.validator.rule.ImuRule;
+import com.smart_physio_therapy.device_service.validator.rule.PulseRule;
 import com.smart_physio_therapy.device_service.validator.rule.ValidatorRule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,29 +17,31 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verifyNoInteractions;
 
 @ExtendWith(MockitoExtension.class)
-public class SensorValidatorEngine {
+public class SensorValidatorEngineTest {
 
     ValidatorEngine validatorEngine;
 
-    @Mock
-    ValidatorRule<SensorData> deviceIdRule;
+    ValidatorEngine emptyValidatorEngine = new ValidatorEngine(List.of());
 
     @Mock
-    ValidatorRule<VitalSignsSensor> pulseRule;
+    DeviceIdRule deviceIdRule;
 
     @Mock
-    ValidatorRule<MusculoskeletalSystemSensor> imuRule;
+    PulseRule pulseRule;
+
+    @Mock
+    ImuRule imuRule;
 
     @BeforeEach
     void setUp() {
         List<ValidatorRule<?>> allRules = List.of(deviceIdRule, pulseRule, imuRule);
         validatorEngine = new ValidatorEngine(allRules);
+        emptyValidatorEngine = new ValidatorEngine(List.of());
     }
 
     @Test
@@ -90,12 +95,20 @@ public class SensorValidatorEngine {
     }
 
     @Test
-    void shouldSkipValidationIfNoRuleMatches() {
-        class UnknownSensorData extends SensorData {}  // Dummy sensor class
-        SensorData unknown = new UnknownSensorData();
+    void shouldSkipValidationIfNoRuleMatchesInVitalSignsSensor() {
+        VitalSignsSensor data = new VitalSignsSensor();
+        data.setDeviceId(null);
+        data.setPulse(-1);
 
-        validatorEngine.validate(unknown);
+        assertDoesNotThrow(() -> validatorEngine.validate(data));
+    }
 
-        verifyNoInteractions(deviceIdRule, pulseRule, imuRule);
+    @Test
+    void shouldSkipValidationIfNoRuleMatchesInMusculoskeletalSensor() {
+        MusculoskeletalSystemSensor data = new MusculoskeletalSystemSensor();
+        data.setDeviceId(null);
+        data.setMuscleForce(-1);
+
+        assertDoesNotThrow(() -> validatorEngine.validate(data));
     }
 }

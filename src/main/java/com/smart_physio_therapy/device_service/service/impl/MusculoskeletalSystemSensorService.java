@@ -26,6 +26,8 @@ public class MusculoskeletalSystemSensorService implements SensorDataService<Mus
         try {
             validatorEngine.validate(musculoskeletalSystemData);
             musculoskeletalSystemSensorRepository.save(musculoskeletalSystemData);
+            log.debug("[MusculoskeletalSystemSensorService]: Musculoskeletal system data has been sent" +
+                    " and saved to MongoDB");
         } catch (InvalidDeviceDataException e) {
             log.warn("[MusculoskeletalSystemSensorService]: Invalid data received: {}", e.getMessage());
             errorHandlerService.handleError("[MusculoskeletalSystemSensorService]: Invalid data received",
