@@ -1,5 +1,34 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: device-service
+
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: smart-physio-therapy-db
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+logging:
+  level:
+    root: INFO
+    com.smart_physio_therapy.device_service: DEBUG
+
 mqtt:
   host: tcp://localhost
   port: 1883
   clientId: device-service-client
   topic: device/data
+
+kafka-config:
+  topic:
+    patient-health-data: patient-health-data/patient-id
+    dead-letter: dead-letter
