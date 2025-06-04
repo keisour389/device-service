@@ -32,3 +32,8 @@ kafka-config:
   topic:
     patient-health-data: patient-health-data/patient-id
     dead-letter: dead-letter
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
